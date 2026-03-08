@@ -7,6 +7,8 @@ using System.Collections.Generic;
 // and the user's response.
 public class Journal
 {       
+    // Member variable to store a list of journal entries. This allows the journal to keep 
+    // track of all the entries that have been added.
     public List<Entry> _entries = new List<Entry>();
 
 
