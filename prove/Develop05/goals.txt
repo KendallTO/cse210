@@ -1,0 +1,4 @@
+751
+SimpleGoal|Go outside|Touch grass|175|True
+EternalGoal|Read the Book of Mormon|1 chapter a day|75
+ChecklistGoal|Read a warhammer 40k book|Pick a book from my phones library and read it|250|True|2|1|2
