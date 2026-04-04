@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 public class Grid
@@ -29,6 +29,15 @@ public class Grid
         {
             Console.WriteLine("Congratulations! You've reached the goal and exited the grid!");
             Environment.Exit(0);
+        }
+    }
+
+    public void HandleTileInteraction(PlayerCharacter player)
+    {
+        Tile currentTile = GetTile(player.Row, player.Col);
+        if (currentTile is NPCTile npcTile)
+        {
+            npcTile.Interact(player);
         }
     }
 
@@ -77,6 +86,16 @@ public class Grid
         tile.Row = row;
         tile.Col = col;
         tiles[row, col] = tile;
+    }
+
+    public void AddNPC(InteractivePlayer npc)
+    {
+        if (npc.Row < 0 || npc.Row >= _rows || npc.Col < 0 || npc.Col >= _cols)
+        {
+            return;
+        }
+
+        tiles[npc.Row, npc.Col] = new NPCTile(npc.Row, npc.Col, npc);
     }
 
     public Tile GetTile(int row, int col)

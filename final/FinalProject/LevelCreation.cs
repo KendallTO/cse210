@@ -4,6 +4,14 @@ public class LevelCreation
 {
     public static void BuildLevelOne(Grid grid)
     {
+        Weapon sword = new Weapon("Sword", 10);
+        var trainer = new InteractivePlayer(0, 3);
+        trainer.AddDialogue("Hello, I'm the trainer! Welcome to the game. (Enter to continue)");
+        trainer.AddDialogue("Use WASD keys to move around and interact with the world.");
+        trainer.AddDialogue("Press 'I' to check your inventory.");
+        trainer.AddDialogue("Here is a sword for you to start with. (Enter to continue)");
+        trainer.AddToNPCInventory(new InventoryItem(sword.WeaponName, "A basic sword that deals 10 damage."));
+        grid.AddNPC(trainer);
         // Add walls in specific locations
         for (int c = 2; c <= 4; c++)
         {

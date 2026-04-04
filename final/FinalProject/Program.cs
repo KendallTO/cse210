@@ -30,7 +30,13 @@ class Program
                 case ConsoleKey.D:
                     player.Move("right", grid);
                     break;
+                case ConsoleKey.I:
+                    player.DisplayInventory();
+                    Console.WriteLine("Press Enter to exit inventory.");
+                    Console.ReadLine();
+                    break;
             }
+            grid.HandleTileInteraction(player);
             grid.ExitThroughGoal(player);
         }
     }
