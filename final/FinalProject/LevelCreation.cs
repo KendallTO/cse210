@@ -12,6 +12,9 @@ public class LevelCreation
         trainer.AddDialogue("Here is a sword for you to start with. (Enter to continue)");
         trainer.AddToNPCInventory(new InventoryItem(sword.WeaponName, "A basic sword that deals 10 damage."));
         grid.AddNPC(trainer);
+        EnemyCharacter goblin = new EnemyCharacter(3, 5, "Goblin", 20, "Club", 5);
+        goblin.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
+        grid.AddEnemy(goblin);
         // Add walls in specific locations
         for (int c = 2; c <= 4; c++)
         {

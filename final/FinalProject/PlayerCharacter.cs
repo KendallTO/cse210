@@ -67,4 +67,13 @@ public class PlayerCharacter : Character
         }
     }
 
+    public void Attack(EnemyCharacter enemy)
+    {
+        int damage = 10;
+        Console.WriteLine($"You attack {enemy.Name} for {damage} damage!");
+        enemy.TakeDamage(damage);
+    }
+
+    public string Name => _name;
+
 }

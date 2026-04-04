@@ -6,6 +6,7 @@ public class Weapon
     private string _weaponName;
 
     public string WeaponName => _weaponName;
+    public int Damage => _damage;
 
     public Weapon(string weaponName, int damage)
     {

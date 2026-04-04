@@ -1,12 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 public class Grid
 {
+    // -- MEMBER VARIABLES --
     protected int _rows;
     protected int _cols;
+
+    // 2D array to hold the tiles of the grid
     protected Tile[,] tiles;
 
+    /// <summary>
+    /// Initializes a new instance of the Grid class with the specified number of rows and columns.
+    /// The grid is initialized with FloorTile objects in all positions.
+    /// </summary>
+    /// <param name="rows">The number of rows in the grid.</param>
+    /// <param name="cols">The number of columns in the grid.</param>
     public Grid(int rows, int cols)
     {
         _rows = rows;
@@ -22,6 +31,8 @@ public class Grid
         }
     }
 
+
+    // -- METHODS --
     public void ExitThroughGoal(PlayerCharacter player)
     {
         Tile currentTile = GetTile(player.Row, player.Col);
@@ -38,6 +49,14 @@ public class Grid
         if (currentTile is NPCTile npcTile)
         {
             npcTile.Interact(player);
+        }
+        else if (currentTile is EnemyTile enemyTile)
+        {
+            enemyTile.Interact(player);
+            if (!enemyTile.Enemy.IsAlive)
+            {
+                SetTile(player.Row, player.Col, new FloorTile(player.Row, player.Col));
+            }
         }
     }
 
@@ -96,6 +115,16 @@ public class Grid
         }
 
         tiles[npc.Row, npc.Col] = new NPCTile(npc.Row, npc.Col, npc);
+    }
+
+    public void AddEnemy(EnemyCharacter enemy)
+    {
+        if (enemy.Row < 0 || enemy.Row >= _rows || enemy.Col < 0 || enemy.Col >= _cols)
+        {
+            return;
+        }
+
+        tiles[enemy.Row, enemy.Col] = new EnemyTile(enemy.Row, enemy.Col, enemy);
     }
 
     public Tile GetTile(int row, int col)

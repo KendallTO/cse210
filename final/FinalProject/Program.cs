@@ -7,7 +7,7 @@ class Program
     {
         var grid = new Grid(8, 12);
         var player = new PlayerCharacter(0, 0);
-
+        
         LevelCreation.BuildLevelOne(grid);
 
         while (true)
