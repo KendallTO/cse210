@@ -24,18 +24,34 @@ public class InteractivePlayer : PlayerCharacter
         _inventory.Add(item);
     }
 
+    public string Role => _role;
+
+    public new IReadOnlyList<InventoryItem> Inventory => _inventory.AsReadOnly();
+
     public void Interact(PlayerCharacter player)
     {
+        Console.Clear();
         Console.WriteLine($"You interact with the {_role}.");
-        foreach (var line in _dialogue)
+        Console.WriteLine();
+
+        for (int i = 0; i < _dialogue.Count; i++)
         {
-            Console.WriteLine(line);
+            Console.WriteLine(_dialogue[i]);
+            Console.WriteLine();
+            Console.WriteLine("Press Enter to continue...");
             Console.ReadLine();
-            Console.Clear();
+
+            if (i < _dialogue.Count - 1)
+            {
+                Console.Clear();
+                Console.WriteLine($"You interact with the {_role}.");
+                Console.WriteLine();
+            }
         }
 
         if (_inventory.Count > 0)
         {
+            Console.Clear();
             Console.WriteLine("You receive:");
             foreach (var item in _inventory)
             {
@@ -43,6 +59,7 @@ public class InteractivePlayer : PlayerCharacter
                 player.AddItemToInventory(item.GetName());
             }
             _inventory.Clear();
+            Console.WriteLine();
             Console.WriteLine("Press Enter to continue.");
             Console.ReadLine();
         }

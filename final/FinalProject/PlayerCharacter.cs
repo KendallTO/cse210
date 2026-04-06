@@ -38,7 +38,6 @@ public class PlayerCharacter : Character
                 newCol++;
                 break;
             default:
-                Console.WriteLine("Invalid direction. Use up, down, left, or right.");
                 return;
         }
 
@@ -58,6 +57,8 @@ public class PlayerCharacter : Character
         _inventory.Add(item);
     }
 
+    public IReadOnlyList<string> Inventory => _inventory.AsReadOnly();
+
     public void DisplayInventory()
     {
         Console.WriteLine("Inventory:");
@@ -65,6 +66,31 @@ public class PlayerCharacter : Character
         {
             Console.WriteLine($"- {item}");
         }
+    }
+
+    public void RemoveItemFromInventory(int index)
+    {
+        if (index >= 0 && index < _inventory.Count)
+        {
+            _inventory.RemoveAt(index);
+        }
+    }
+
+    public bool UseHealthPotion(int healAmount = 20)
+    {
+        for (int i = 0; i < _inventory.Count; i++)
+        {
+            if (_inventory[i].Contains("Health Potion"))
+            {
+                int oldHealth = _health;
+                _health = Math.Min(_health + healAmount, _maxHealth);
+                int actualHealing = _health - oldHealth;
+                Console.WriteLine($"You used a Health Potion and restored {actualHealing} HP!");
+                RemoveItemFromInventory(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void Attack(EnemyCharacter enemy)

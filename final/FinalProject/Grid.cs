@@ -12,7 +12,7 @@ public class Grid
 
     /// <summary>
     /// Initializes a new instance of the Grid class with the specified number of rows and columns.
-    /// The grid is initialized with FloorTile objects in all positions.
+    /// The grid is initialized with floor tiles in all positions.
     /// </summary>
     /// <param name="rows">The number of rows in the grid.</param>
     /// <param name="cols">The number of columns in the grid.</param>
@@ -26,7 +26,7 @@ public class Grid
         {
             for (int c = 0; c < _cols; c++)
             {
-                tiles[r, c] = new FloorTile(r, c);
+                tiles[r, c] = Tile.Floor(r, c);
             }
         }
     }
@@ -36,27 +36,36 @@ public class Grid
     public void ExitThroughGoal(PlayerCharacter player)
     {
         Tile currentTile = GetTile(player.Row, player.Col);
-        if (currentTile is GoalTile)
+        if (currentTile != null && currentTile.IsGoal)
         {
             Console.WriteLine("Congratulations! You've reached the goal and exited the grid!");
             Environment.Exit(0);
         }
     }
 
+    public void MoveToNextLevel(PlayerCharacter player)
+    {
+        Tile currentTile = GetTile(player.Row, player.Col);
+        if (currentTile != null && currentTile.IsGoal)
+        {
+            Console.WriteLine("Congratulations! You've reached the goal and are moving to the next level!");
+            LevelCreation.BuildLevelTwo(this);
+        }
+    }
+
     public void HandleTileInteraction(PlayerCharacter player)
     {
         Tile currentTile = GetTile(player.Row, player.Col);
-        if (currentTile is NPCTile npcTile)
+        if (currentTile == null)
         {
-            npcTile.Interact(player);
+            return;
         }
-        else if (currentTile is EnemyTile enemyTile)
+
+        currentTile.Interact(player);
+
+        if (currentTile.IsEnemy && !currentTile.Enemy.IsAlive)
         {
-            enemyTile.Interact(player);
-            if (!enemyTile.Enemy.IsAlive)
-            {
-                SetTile(player.Row, player.Col, new FloorTile(player.Row, player.Col));
-            }
+            SetTile(player.Row, player.Col, Tile.Floor(player.Row, player.Col));
         }
     }
 
@@ -79,6 +88,17 @@ public class Grid
         }
     }
 
+    public void ClearGrid()
+    {
+        for (int r = 0; r < _rows; r++)
+        {
+            for (int c = 0; c < _cols; c++)
+            {
+                tiles[r, c] = Tile.Floor(r, c);
+            }
+        }
+    }
+
     public bool IsValidMove(int row, int col)
     {
         if (row < 0 || row >= _rows || col < 0 || col >= _cols)
@@ -87,7 +107,7 @@ public class Grid
         }
 
         Tile tile = tiles[row, col];
-        return !(tile is WallTile);
+        return tile != null && tile.IsWalkable;
     }
 
     public bool IsWalkable(int row, int col)
@@ -114,7 +134,7 @@ public class Grid
             return;
         }
 
-        tiles[npc.Row, npc.Col] = new NPCTile(npc.Row, npc.Col, npc);
+        tiles[npc.Row, npc.Col] = Tile.NPC(npc.Row, npc.Col, npc);
     }
 
     public void AddEnemy(EnemyCharacter enemy)
@@ -124,7 +144,7 @@ public class Grid
             return;
         }
 
-        tiles[enemy.Row, enemy.Col] = new EnemyTile(enemy.Row, enemy.Col, enemy);
+        tiles[enemy.Row, enemy.Col] = Tile.EnemyTile(enemy.Row, enemy.Col, enemy);
     }
 
     public Tile GetTile(int row, int col)

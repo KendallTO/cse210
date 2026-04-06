@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 
 public class LevelCreation
 {
@@ -16,27 +17,45 @@ public class LevelCreation
         goblin.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
         grid.AddEnemy(goblin);
         // Add walls in specific locations
-        for (int c = 2; c <= 4; c++)
+        for (int c = 0; c <= 4; c++)
         {
-            grid.SetTile(2, c, new WallTile(2, c));
+            grid.SetTile(2, c, Tile.Wall(2, c));
         }
 
-        for (int r = 4; r <= 6; r++)
+        for (int c = 3; c <= 3; c++)
         {
-            grid.SetTile(r, 6, new WallTile(r, 6));
+            grid.SetTile(1, c, Tile.Wall(1, c));
+        }
+
+        for (int r = 0; r <= 6; r++)
+        {
+            grid.SetTile(r, 6, Tile.Wall(r, 6));
         }
 
         // Place the goal tile
-        grid.SetTile(7, 11, new GoalTile(7, 11));
+        grid.SetTile(7, 11, Tile.Goal(7, 11));
     }
 
     public static void BuildLevelTwo(Grid grid)
     {
-        // Example of a second level layout
-        grid.SetTile(1, 1, new WallTile(1, 1));
-        grid.SetTile(1, 2, new WallTile(1, 2));
-        grid.SetTile(2, 2, new WallTile(2, 2));
-        grid.SetTile(5, 8, new WallTile(5, 8));
-        grid.SetTile(7, 10, new GoalTile(7, 10));
+        EnemyCharacter goblin = new EnemyCharacter(3, 5, "Goblin", 20, "Club", 5);
+        goblin.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
+        grid.AddEnemy(goblin);
+        EnemyCharacter goblin2 = new EnemyCharacter(1, 6, "Goblin", 20, "Club", 5);
+        goblin2.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
+        grid.AddEnemy(goblin2);
+        // Add walls in specific locations
+        // for (int c = 0; c <= 4; c++)
+        // {
+        //     grid.SetTile(2, c, Tile.Wall(2, c));
+        // }
+
+        for (int r = 0; r <= 6; r++)
+        {
+            grid.SetTile(r, 1, Tile.Wall(r, 1));
+        }
+
+        // Place the goal tile
+        grid.SetTile(0, 0, Tile.Goal(0, 0));
     }
 }

@@ -14,7 +14,7 @@ public class NPCTile : Tile
         Console.Write("[?]");
     }
 
-    public void Interact(PlayerCharacter player)
+    public override void Interact(PlayerCharacter player)
     {
         _npc.Interact(player);
     }
