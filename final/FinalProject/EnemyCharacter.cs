@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class EnemyCharacter : Character
 {
     // -- MEMBER VARIABLES & FIELDS --
-    private int _experienceReward;
+    private int _currencyReward;
     private Weapon _weapon;
     private List<InventoryItem> _loot;
     private Random _random = new Random();
@@ -21,21 +21,28 @@ public class EnemyCharacter : Character
     /// <param name="row">The row position of the enemy on the grid.</param
     /// <param name="col">The column position of the enemy on the grid.</param>
     /// <param name="enemyName">The name of the enemy.</param>
-    /// <param name="experienceReward">The amount of experience points the player receives for defeating this enemy.</param>
+    /// <param name="currencyReward">The amount of currency points the player receives for defeating this enemy.</param>
     /// <param name="weaponName">The name of the weapon the enemy uses.</param
     /// <param name="weaponDamage">The damage dealt by the enemy's weapon.</param>
-    public EnemyCharacter(int row, int col, string enemyName, int experienceReward, string weaponName, int weaponDamage)
-        : base(enemyName, 80, 10, row, col)
+    public EnemyCharacter(int row, int col, string enemyName, int currencyReward, string weaponName, int weaponDamage)
+        : base(enemyName, 80, row, col)
     {
-        _experienceReward = experienceReward;
+        _currencyReward = currencyReward;
         _weapon = new Weapon(weaponName, weaponDamage);
         _loot = new List<InventoryItem>();
     }
 
+    public EnemyCharacter(int row, int col, string enemyName, int maxHealth, int currencyReward, string weaponName, int weaponDamage)
+        : base(enemyName, maxHealth, row, col)
+    {
+        _currencyReward = currencyReward;
+        _weapon = new Weapon(weaponName, weaponDamage);
+        _loot = new List<InventoryItem>();
+    }
 
     // -- METHODS --
     public string Name => _name;
-    public int ExperienceReward => _experienceReward;
+    public int CurrencyReward => _currencyReward;
     public Weapon Weapon => _weapon;
     public bool IsAlive => _health > 0;
 
@@ -73,9 +80,18 @@ public class EnemyCharacter : Character
     /// player or the enemy is defeated, or the player successfully escapes.
     /// </summary>
     /// <param name="player">The player character being attacked.</param>
-    public void Attack(PlayerCharacter player)
+    public void Attack(PlayerCharacter player, bool showMessage = true, bool playSound = true)
     {
-        Console.WriteLine($"The {Name} attacks with {Weapon.WeaponName} for {Weapon.Damage} damage!");
+        if (showMessage)
+        {
+            Console.WriteLine($"The {Name} attacks with {Weapon.WeaponName} for {Weapon.Damage} damage!");
+        }
+
+        if (playSound)
+        {
+            GameSounds.PlayAttackSound();
+        }
+
         player.ReceiveDamage(Weapon.Damage);
     }
 

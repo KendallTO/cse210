@@ -86,6 +86,8 @@ public class Grid
             }
             Console.WriteLine();
         }
+        Console.WriteLine($"Player: {player.Name}");
+        Console.WriteLine($"HP: {player.Health}/{player.MaxHealth} {Battle.BuildHealthBar(player.Health, player.MaxHealth)}");
     }
 
     public void ClearGrid()
@@ -99,7 +101,7 @@ public class Grid
         }
     }
 
-    public bool IsValidMove(int row, int col)
+    public bool IsValidMove(int row, int col, PlayerCharacter player = null)
     {
         if (row < 0 || row >= _rows || col < 0 || col >= _cols)
         {
@@ -107,7 +109,35 @@ public class Grid
         }
 
         Tile tile = tiles[row, col];
-        return tile != null && tile.IsWalkable;
+        if (tile == null)
+        {
+            return false;
+        }
+
+        if (tile.Type == TileType.Door)
+        {
+            // Doors require a key to pass through
+            if (player != null && player.HasKey())
+            {
+                GameSounds.PlayDoorOpen();
+                Console.WriteLine("You use your key to unlock the door!");
+                player.RemoveKey(); // Consume the key
+                // Convert the door to an unlocked door tile
+                Thread.Sleep(2000); // Brief pause to allow the sound to play
+                SetTile(row, col, Tile.UnlockedDoor(row, col));
+                return true;
+            }
+            else
+            {
+                GameSounds.PlayDoorHandleRattle();
+                Console.WriteLine("The door is locked. You need a key to open it. (Press Enter to continue)");
+                Console.ReadLine();
+
+                return false;
+            }
+        }
+
+        return tile.IsWalkable;
     }
 
     public bool IsWalkable(int row, int col)
@@ -137,6 +167,16 @@ public class Grid
         tiles[npc.Row, npc.Col] = Tile.NPC(npc.Row, npc.Col, npc);
     }
 
+    public void AddCustomNPC(InteractivePlayer npc, string customSymbol)
+    {
+        if (npc.Row < 0 || npc.Row >= _rows || npc.Col < 0 || npc.Col >= _cols)
+        {
+            return;
+        }
+
+        tiles[npc.Row, npc.Col] = Tile.CustomNPC(npc.Row, npc.Col, npc, customSymbol);
+    }
+
     public void AddEnemy(EnemyCharacter enemy)
     {
         if (enemy.Row < 0 || enemy.Row >= _rows || enemy.Col < 0 || enemy.Col >= _cols)
@@ -145,6 +185,16 @@ public class Grid
         }
 
         tiles[enemy.Row, enemy.Col] = Tile.EnemyTile(enemy.Row, enemy.Col, enemy);
+    }
+
+    public void AddCustomEnemy(EnemyCharacter enemy, string customSymbol)
+    {
+        if (enemy.Row < 0 || enemy.Row >= _rows || enemy.Col < 0 || enemy.Col >= _cols)
+        {
+            return;
+        }
+        tiles[enemy.Row, enemy.Col] = Tile.CustomEnemyTile(enemy.Row, enemy.Col, enemy, customSymbol);
+    
     }
 
     public Tile GetTile(int row, int col)

@@ -5,6 +5,8 @@ class Program
 {
     static void Main(string[] args)
     {
+        GameSounds.PlayBackgroundMusic();
+
         var grid = new Grid(8, 12);
         var player = new PlayerCharacter(0, 0);
 
@@ -15,6 +17,7 @@ class Program
         LevelCreation.BuildLevelOne(grid);
         while (gameIsRunning)
         {
+
             while (LevelOne)
             {
                 Console.Clear();

@@ -30,12 +30,11 @@ public class Character
     /// <param name="armor">The armor value of the character, which can reduce incoming damage.</param>
     /// <param name="row">The initial row position of the character on the grid.</param>
     /// <param name="col">The initial column position of the character on the grid.</param>
-    public Character(string name, int health, int armor, int row, int col)
+    public Character(string name, int health, int row, int col)
     {
         _name = name;
         _health = health;
         _maxHealth = health;
-        _armor = armor;
         _row = row;
         _col = col;
 

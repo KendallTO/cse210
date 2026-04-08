@@ -16,6 +16,7 @@ public class Battle
     public static void StartBattle(PlayerCharacter player, EnemyCharacter enemy)
     {
         bool hasEscaped = false;
+        GameSounds.PlayFightMusic();
 
         while (player.Health > 0 && enemy.Health > 0 && !hasEscaped)
         {
@@ -24,8 +25,9 @@ public class Battle
 
             Console.WriteLine("Choose an action:");
             Console.WriteLine("1. Attack");
-            Console.WriteLine("2. Use Item");
-            Console.WriteLine("3. Run");
+            Console.WriteLine("2. Quick Battle");
+            Console.WriteLine("3. Use Item");
+            Console.WriteLine("4. Run");
             Console.Write("Action: ");
 
             string choice = Console.ReadLine()?.Trim();
@@ -41,15 +43,18 @@ public class Battle
                     }
                     break;
                 case "2":
-                    UseBattleItem(player, enemy);
+                    RunQuickBattle(player, enemy);
                     break;
                 case "3":
+                    UseBattleItem(player, enemy);
+                    break;
+                case "4":
                     Console.WriteLine("You attempt to run away...");
                     Console.WriteLine("You escaped the battle.");
                     hasEscaped = true;
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Please enter 1, 2, or 3.");
+                    Console.WriteLine("Invalid choice. Please enter 1, 2, 3, or 4.");
                     break;
             }
 
@@ -73,10 +78,16 @@ public class Battle
         else if (player.Health <= 0)
         {
             Console.WriteLine("You have been defeated!");
+            Thread.Sleep(2000); // Pause for 2 seconds before clearing the screen
+            Console.Clear();
+            Console.WriteLine("Game Over");
+            Environment.Exit(0); // Exit the game
         }
         else if (enemy.Health <= 0)
         {
             Console.WriteLine($"You defeated the {enemy.Name}!");
+            player.AddCurrencyPoints(enemy.CurrencyReward);
+            Console.WriteLine($"You gained {enemy.CurrencyReward} currency points!");
             var loot = enemy.DropLoot();
             if (loot != null)
             {
@@ -89,6 +100,7 @@ public class Battle
             }
         }
 
+        GameSounds.PlayBackgroundMusic();
         Console.WriteLine();
         Console.WriteLine("Press Enter to continue...");
         Console.ReadLine();
@@ -142,6 +154,16 @@ public class Battle
                     }
                 }
             }
+            else if (selectedItem.Contains("Damage Potion"))
+            {
+                if (player.UseDamagePotion(10))
+                {
+                    if (enemy.Health > 0)
+                    {
+                        enemy.Attack(player);
+                    }
+                }
+            }
             else
             {
                 Console.WriteLine($"You can't use {selectedItem} right now.");
@@ -157,6 +179,21 @@ public class Battle
         Console.ReadLine();
     }
 
+    private static void RunQuickBattle(PlayerCharacter player, EnemyCharacter enemy)
+    {
+        while (player.Health > 0 && enemy.Health > 0)
+        {
+            player.Attack(enemy, false, false);
+
+            if (enemy.Health > 0)
+            {
+                enemy.Attack(player, false, false);
+            }
+        }
+
+        GameSounds.PlayQuickBattleSound();
+    }
+
     public static void StartNPCInteraction(PlayerCharacter player, InteractivePlayer npc)
     {
         bool interactionEnded = false;
@@ -168,8 +205,15 @@ public class Battle
 
             Console.WriteLine("Choose an action:");
             Console.WriteLine("1. Talk");
-            Console.WriteLine("2. Check Items");
-            Console.WriteLine("3. Leave");
+            if (npc.Inventory.Count > 0)
+            {
+                Console.WriteLine("2. Trade");
+                Console.WriteLine("3. Leave");
+            }
+            else
+            {
+                Console.WriteLine("2. Leave");
+            }
             Console.Write("Action: ");
 
             string choice = Console.ReadLine()?.Trim();
@@ -182,25 +226,37 @@ public class Battle
                     interactionEnded = true;
                     break;
                 case "2":
-                    if (npc.Inventory.Count == 0)
+                    if (npc.Inventory.Count > 0)
                     {
-                        Console.WriteLine("This NPC has nothing to offer right now.");
+                        npc.Trade(player);
+                        interactionEnded = true;
                     }
                     else
                     {
-                        Console.WriteLine("This NPC is carrying:");
-                        foreach (var item in npc.Inventory)
-                        {
-                            Console.WriteLine($"- {item.Name}: {item.Description}");
-                        }
+                        Console.WriteLine("You step away from the conversation.");
+                        interactionEnded = true;
                     }
                     break;
                 case "3":
-                    Console.WriteLine("You step away from the conversation.");
-                    interactionEnded = true;
+                    if (npc.Inventory.Count > 0)
+                    {
+                        Console.WriteLine("You step away from the conversation.");
+                        interactionEnded = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice. Please enter 1 or 2.");
+                    }
                     break;
                 default:
-                    Console.WriteLine("Invalid choice. Please enter 1, 2, or 3.");
+                    if (npc.Inventory.Count > 0)
+                    {
+                        Console.WriteLine("Invalid choice. Please enter 1, 2, or 3.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice. Please enter 1 or 2.");
+                    }
                     break;
             }
 
@@ -242,7 +298,7 @@ public class Battle
         Console.WriteLine();
     }
 
-    private static string BuildHealthBar(int currentHealth, int maxHealth, int barWidth = 20)
+    public static string BuildHealthBar(int currentHealth, int maxHealth, int barWidth = 20)
     {
         if (maxHealth <= 0)
         {
