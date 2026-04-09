@@ -17,6 +17,7 @@ class Program
         LevelCreation.BuildLevelOne(grid);
         while (gameIsRunning)
         {
+            //LevelCreation.Introduction();
 
             while (LevelOne)
             {
@@ -38,9 +39,7 @@ class Program
                         player.Move("right", grid);
                         break;
                     case ConsoleKey.I:
-                        player.DisplayInventory();
-                        Console.WriteLine("Press Enter to exit inventory.");
-                        Console.ReadLine();
+                        player.OpenInventoryMenu();
                         break;
                 }
                 grid.HandleTileInteraction(player);
@@ -74,9 +73,7 @@ class Program
                         player.Move("right", grid);
                         break;
                     case ConsoleKey.I:
-                        player.DisplayInventory();
-                        Console.WriteLine("Press Enter to exit inventory.");
-                        Console.ReadLine();
+                        player.OpenInventoryMenu();
                         break;
                 }
                 grid.HandleTileInteraction(player);

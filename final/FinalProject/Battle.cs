@@ -143,30 +143,9 @@ public class Battle
         }
         else if (itemChoice >= 1 && itemChoice <= player.Inventory.Count)
         {
-            string selectedItem = player.Inventory[itemChoice - 1];
-            if (selectedItem.Contains("Health Potion"))
+            if (player.TryUseInventoryItem(itemChoice - 1) && enemy.Health > 0)
             {
-                if (player.UseHealthPotion(20))
-                {
-                    if (enemy.Health > 0)
-                    {
-                        enemy.Attack(player);
-                    }
-                }
-            }
-            else if (selectedItem.Contains("Damage Potion"))
-            {
-                if (player.UseDamagePotion(10))
-                {
-                    if (enemy.Health > 0)
-                    {
-                        enemy.Attack(player);
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine($"You can't use {selectedItem} right now.");
+                enemy.Attack(player);
             }
         }
         else

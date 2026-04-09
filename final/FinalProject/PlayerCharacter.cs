@@ -69,22 +69,98 @@ public class PlayerCharacter : Character
 
     public IReadOnlyList<string> Inventory => _inventory.AsReadOnly();
 
-    public void DisplayInventory()
+    public void DisplayInventory(bool showItemNumbers = false)
     {
         DisplayCurrencyPoints();
         if (_equippedWeapon != null)
         {
             Console.WriteLine($"Equipped Weapon: {_equippedWeapon.WeaponName} ({_equippedWeapon.Damage} dmg)");
         }
+
         Console.WriteLine("Inventory:");
-        if (_inventory.Count == 0)        {
+        if (_inventory.Count == 0)
+        {
             Console.WriteLine("- (empty)");
             return;
         }
-        foreach (string item in _inventory)
+
+        for (int i = 0; i < _inventory.Count; i++)
         {
-            Console.WriteLine($"- {item}");
+            string prefix = showItemNumbers ? $"{i + 1}. " : "- ";
+            Console.WriteLine($"{prefix}{_inventory[i]}");
         }
+    }
+
+    public void OpenInventoryMenu()
+    {
+        bool inventoryOpen = true;
+
+        while (inventoryOpen)
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("               INVENTORY                ");
+            Console.WriteLine("========================================");
+            Console.WriteLine();
+            DisplayInventory(true);
+            Console.WriteLine();
+
+            if (_inventory.Count == 0)
+            {
+                Console.WriteLine("Press Enter to exit inventory.");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("0. Exit inventory");
+            Console.Write("Select an item to use: ");
+
+            if (!int.TryParse(Console.ReadLine()?.Trim(), out int itemChoice))
+            {
+                Console.WriteLine("Invalid input.");
+            }
+            else if (itemChoice == 0)
+            {
+                inventoryOpen = false;
+                continue;
+            }
+            else if (itemChoice >= 1 && itemChoice <= _inventory.Count)
+            {
+                TryUseInventoryItem(itemChoice - 1);
+            }
+            else
+            {
+                Console.WriteLine("Invalid selection.");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Press Enter to continue...");
+            Console.ReadLine();
+        }
+    }
+
+    public bool TryUseInventoryItem(int index)
+    {
+        if (index < 0 || index >= _inventory.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            return false;
+        }
+
+        string selectedItem = _inventory[index];
+
+        if (selectedItem.Contains("Health Potion"))
+        {
+            return UseHealthPotion(20);
+        }
+
+        if (selectedItem.Contains("Damage Potion"))
+        {
+            return UseDamagePotion(10);
+        }
+
+        Console.WriteLine($"You can't use {selectedItem} right now.");
+        return false;
     }
 
     public void RemoveItemFromInventory(int index)
