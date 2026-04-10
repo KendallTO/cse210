@@ -33,16 +33,6 @@ public class Grid
 
 
     // -- METHODS --
-    public void ExitThroughGoal(PlayerCharacter player)
-    {
-        Tile currentTile = GetTile(player.Row, player.Col);
-        if (currentTile != null && currentTile.IsGoal)
-        {
-            Console.WriteLine("Congratulations! You've reached the goal and exited the grid!");
-            Environment.Exit(0);
-        }
-    }
-
     public void MoveToNextLevel(PlayerCharacter player)
     {
         Tile currentTile = GetTile(player.Row, player.Col);

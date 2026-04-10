@@ -96,7 +96,14 @@ public class InteractivePlayer : PlayerCharacter
         int index = 1;
         foreach (var item in _nPCInventory)
         {
-            Console.WriteLine($"{index++}. - {item.Name} ¢{item.Price} currency points");
+            if (item is Weapon weapon)
+            {
+                Console.WriteLine($"{index++}. - {weapon.Name} ({weapon.Damage} dmg) ¢{weapon.Price} currency points");
+            }
+            else
+            {
+                Console.WriteLine($"{index++}. - {item.Name} ¢{item.Price} currency points");
+            }
         }
 
         Console.WriteLine("\nEnter the number of the item you want to buy, or press Enter to exit.");
@@ -107,7 +114,15 @@ public class InteractivePlayer : PlayerCharacter
             InventoryItem selectedItem = _nPCInventory[choice - 1];
             if (player.CurrencyPoints >= selectedItem.Price)
             {
-                player.AddItemToInventory(selectedItem.GetName());
+                if (selectedItem is Weapon selectedWeapon)
+                {
+                    player.EquipWeapon(selectedWeapon);
+                }
+                else
+                {
+                    player.AddItemToInventory(selectedItem.GetName());
+                }
+
                 player.AddCurrencyPoints(-selectedItem.Price);
                 GameSounds.SaleComplete();
                 Console.WriteLine($"You bought {selectedItem.Name} for ¢{selectedItem.Price} currency points.");

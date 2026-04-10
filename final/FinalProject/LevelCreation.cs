@@ -27,6 +27,11 @@ public class LevelCreation
         "For your acts of valor, the Emperor has requested your presence at the castle."
     };
 
+    private readonly List<string> _apologyDialogue = new()
+    {
+        "I did not have time to implement a full game so enjoy this sandbox level where \nyou can test out all the different weapons and items in the game! (Enter to continue)"
+    };
+
     public static void Introduction()
     {
         foreach (string line in new LevelCreation()._introductionDialogue)
@@ -81,7 +86,7 @@ public class LevelCreation
         trainer.AddDialogue("I'm going to be your trainer! Welcome to Terrahaven's finest training grounds.");
         trainer.AddDialogue("Here, you will learn the basics of combat and survival.");
         trainer.AddDialogue("Press 'I' to check your inventory.");
-        trainer.AddDialogue("Here is a sword for you to start with.", new Sword());
+        trainer.AddDialogue("Here is a sword for you to start with.", new MeleeWeapon("Sword", 10, "slash"));
         trainer.AddDialogue("Now, go over there and test it against the dummy!");
         grid.AddNPC(trainer);
 
@@ -146,20 +151,19 @@ public class LevelCreation
         trainer.AddDialogue("Make that slimy serpent regret this insolence!");
         trainer.AddDialogue("Kill his minions and defend the gate!");
         grid.AddNPC(trainer);
+
         EnemyCharacter goblin = new EnemyCharacter(5, 7, "Goblin", 20, "Club", 5);
         goblin.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
         grid.AddEnemy(goblin);
+
         EnemyCharacter goblin2 = new EnemyCharacter(3, 9, "Goblin", 20, "Club", 5);
         goblin2.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
         grid.AddEnemy(goblin2);
+
         EnemyCharacter ork = new EnemyCharacter(4, 11, "Ork", 90, 30, "Scimitar", 8);
         ork.AddLoot(new InventoryItem("Key", "A key that can unlock doors."));
         grid.AddCustomEnemy(ork, "O");
-        // Add walls in specific locations
-        // for (int c = 0; c <= 4; c++)
-        // {
-        //     grid.SetTile(2, c, Tile.Wall(2, c));
-        // }
+
         for (int c = 4; c <= 5; c++)
         {
             grid.SetTile(3, c, Tile.Wall(3, c));
@@ -369,6 +373,170 @@ public class LevelCreation
         grid.SetTile(7, 3, Tile.Door(7, 3));
 
     }
+
+    public static void BuildLevelFive(Grid grid)
+    {
+        var marshal = new InteractivePlayer(3, 4, "Marshal");
+        marshal.AddDialogue("Welcome to the armory, Guardian!");
+        marshal.AddDialogue("This is where you can find the best gear in Terrahaven, fit for a Guardian!");
+        marshal.AddDialogue("I see the Emperor has sent you to me, so I know you can be trusted with the best equipment we have.");
+        marshal.AddDialogue("Let me see what I have in stock...");
+        marshal.AddDialogue("I have a variety of weapons you can chose from, but keep in mind, you can only \ncarry one weapon at a time, so choose wisely!");
+        marshal.AddDialogue("I have a greatsword that can cleave through enemies swiftly, a longbow that allows \nyou to strike from range, and a staff that can deal holy damage and has \na chance to deal lingering damage over time.");
+        marshal.AddDialogue("For some extra coin, I can also sell you some potions the alchemists have brewed up.");
+        marshal.AddToNPCInventory(new InventoryItem("Health Potion", "Restores 20 health.", 10));
+        marshal.AddToNPCInventory(new InventoryItem("Health Potion", "Restores 20 health.", 10));
+        marshal.AddToNPCInventory(new InventoryItem("Damage Potion", "Deal 10 additional damage on attack.", 15));
+        marshal.AddToNPCInventory(new InventoryItem("The Emperor's Best", "Below are items to aid you in your quest.", 999));
+        marshal.AddToNPCInventory(new InventoryItem("Key", "A key that can unlock doors.", 0));
+        marshal.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        marshal.AddToNPCInventory(new InventoryItem("Surgical Kit", "Fully restores all missing health.", 0));
+        marshal.AddToNPCInventory(new MeleeWeapon("Greatsword", 18, "cleave", 0));
+        marshal.AddToNPCInventory(new RangedWeapon("Longbow", 12, 2, 0));
+        marshal.AddToNPCInventory(new MagicWeapon("Staff of the Allfather", 14, "holy", 5, 0));
+        grid.AddCustomNPC(marshal, "$");
+        
+
+        for (int c = 3; c <= 8; c++)
+        {
+            grid.SetTile(6, c, Tile.Wall(6, c));
+        }
+
+        for (int c = 3; c <= 8; c++)
+        {
+            grid.SetTile(0, c, Tile.Wall(0, c));
+        }
+
+        for (int c = 7; c <= 7; c++)
+        {
+            grid.SetTile(2, c, Tile.Wall(2, c));
+        }
+
+        for (int c = 4; c <= 4; c++)
+        {
+            grid.SetTile(2, c, Tile.Wall(2, c));
+        }
+
+        for (int c = 4; c <= 4; c++)
+        {
+            grid.SetTile(4, c, Tile.Wall(4, c));
+        }
+
+        for (int r = 1; r <= 5; r++)
+        {
+            grid.SetTile(r, 3, Tile.Wall(r, 3));
+        }
+
+        for (int r = 2; r <= 5; r++)
+        {
+            grid.SetTile(r, 8, Tile.Wall(r, 8));
+        }
+
+        grid.SetTile(1, 7, Tile.Door(1, 7));
+
+        grid.SetTile(1, 8, Tile.Goal(1, 8));
+    }
+
+    public static void ShowApology()
+    {
+        foreach (string line in new LevelCreation()._apologyDialogue)
+        {
+            Console.Clear();
+            TypeLine(line);
+            new LevelCreation().ShowSpinner(2);
+        }
+
+        new LevelCreation().ShowSpinner(2);
+        Console.Clear();
+    }
+
+    public static void BuildSandboxLevel(Grid grid)
+    {
+        var trader = new InteractivePlayer(3, 10, "Trader");
+        trader.AddDialogue("Welcome to the Box, Guardian!");
+        trader.AddDialogue("Have fun testing out all the different weapons and items in the game! (Enter to continue)");
+        trader.AddToNPCInventory(new InventoryItem("Health Potion", "Restores 20 health.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Health Potion", "Restores 20 health.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Damage Potion", "Deal 10 additional damage on attack.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Damage Potion", "Deal 10 additional damage on attack.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Key", "A key that can unlock doors.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("+Max Health Potion", "Increases your maximum health by 10.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Surgical Kit", "Fully restores all missing health.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Surgical Kit", "Fully restores all missing health.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Surgical Kit", "Fully restores all missing health.", 0));
+        trader.AddToNPCInventory(new InventoryItem("Surgical Kit", "Fully restores all missing health.", 0));
+        trader.AddToNPCInventory(new MeleeWeapon("Greatsword", 18, "cleave", 0));
+        trader.AddToNPCInventory(new MeleeWeapon("Greatsword", 18, "cleave", 0));
+        trader.AddToNPCInventory(new RangedWeapon("Longbow", 12, 2, 0));
+        trader.AddToNPCInventory(new RangedWeapon("Longbow", 12, 2, 0));
+        trader.AddToNPCInventory(new MagicWeapon("Staff of the Allfather", 14, "holy", 5, 0));
+        trader.AddToNPCInventory(new MagicWeapon("Staff of the Allfather", 14, "holy", 5, 0));
+        trader.AddToNPCInventory(new MagicWeapon("The Allfather's Gun", 50, "holy", 15, 0));
+        trader.AddToNPCInventory(new MagicWeapon("The Allfather's Gun", 50, "holy", 15, 0));
+        grid.AddCustomNPC(trader, "$");
+
+        for (int c = 10; c <= 11; c++)
+        {
+            grid.SetTile(2, c, Tile.Wall(2, c));
+        }
+
+        for (int c = 10; c <= 11; c++)
+        {
+            grid.SetTile(4, c, Tile.Wall(4, c));
+        }
+
+        for (int r = 3; r <= 5; r++)
+        {
+            grid.SetTile(r, 11, Tile.Wall(r, 11));
+        }
+
+        EnemyCharacter goblin = new EnemyCharacter(0, 3, "Goblin", 20, "Club", 5);
+        goblin.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
+        grid.AddEnemy(goblin);
+
+        EnemyCharacter goblin2 = new EnemyCharacter(1, 3, "Goblin", 20, "Club", 5);
+        goblin2.AddLoot(new InventoryItem("Health Potion", "Restores 20 health."));
+        grid.AddEnemy(goblin2);
+
+        EnemyCharacter ork = new EnemyCharacter(3, 3, "Ork", 90, 30, "Scimitar", 8);
+        grid.AddCustomEnemy(ork, "O");
+
+        EnemyCharacter ork2 = new EnemyCharacter(4, 3, "Ork", 90, 30, "Scimitar", 8);
+        grid.AddCustomEnemy(ork2, "O");
+
+        EnemyCharacter deamonSpawn = new EnemyCharacter(6, 3, "Deamon Spawn", 110, 75, "Gnashing Teeth", 25);
+        grid.AddCustomEnemy(deamonSpawn, "Y");
+
+        EnemyCharacter deamonSpawn2 = new EnemyCharacter(7, 3, "Deamon Spawn", 110, 75, "Gnashing Teeth", 25);
+        grid.AddCustomEnemy(deamonSpawn2, "Y");
+
+        EnemyCharacter snake = new EnemyCharacter(6, 1, "Snake", 50, 15, "Bite", 15);
+        grid.AddCustomEnemy(snake, "S");
+
+        EnemyCharacter snake2 = new EnemyCharacter(7, 1, "Snake", 50, 15, "Bite", 15);
+        grid.AddCustomEnemy(snake2, "S");
+
+        EnemyCharacter gargoyle = new EnemyCharacter(0, 1, "Gargoyle", 75, 25, "Slam", 25);
+        grid.AddCustomEnemy(gargoyle, "R");
+
+        EnemyCharacter gargoyle2 = new EnemyCharacter(1, 1, "Gargoyle", 75, 25, "Slam", 25);
+        grid.AddCustomEnemy(gargoyle2, "R");
+
+        EnemyCharacter deamonPrince = new EnemyCharacter(3, 0, "Deamon Prince", 275, 150, "Black Blade", 40);
+        grid.AddCustomEnemy(deamonPrince, "M");
+
+        EnemyCharacter deamonPrince2 = new EnemyCharacter(4, 0, "Deamon Prince", 275, 150, "Black Blade", 40);
+        grid.AddCustomEnemy(deamonPrince2, "M");
+
+        grid.SetTile(0, 11, Tile.Goal(0, 11));
+    }
+
+    
 }
 
 

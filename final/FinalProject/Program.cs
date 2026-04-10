@@ -9,6 +9,10 @@ class Program
     private const int LevelThreeStartCol = 6;
     private const int LevelFourStartRow = 7;
     private const int LevelFourStartCol = 6;
+    private const int LevelFiveStartRow = 3;
+    private const int LevelFiveStartCol = 7;
+    private const int SandBoxStartRow = 7;
+    private const int SandBoxStartCol = 7;
 
     static void Main(string[] args)
     {
@@ -22,6 +26,8 @@ class Program
         bool levelTwo = false;
         bool levelThree = false;
         bool levelFour = false;
+        bool levelFive = false;
+        bool sandboxLevel = false;
 
         LevelCreation.BuildLevelOne(grid);
 
@@ -182,14 +188,98 @@ class Program
 
                 if (grid.GetTile(player.Row, player.Col).IsGoal)
                 {
+                    grid.MoveToNextLevel(player);
+                    grid.ClearGrid();
+                    levelOne = false;
+                    levelTwo = false;
+                    levelThree = false;
+                    levelFour = false;
+                    levelFive = true;
+                    break;
+                }
+            }
+
+            player.UpdateName("Guardian");
+            LevelCreation.BuildLevelFive(grid);
+            player.SetPosition(LevelFiveStartRow, LevelFiveStartCol);
+
+            while (levelFive)
+            {
+                Console.Clear();
+                Console.WriteLine("Level 5:");
+                grid.DrawGrid(player);
+
+                switch (Console.ReadKey(true).Key)
+                {
+                    case ConsoleKey.W:
+                        player.Move("up", grid);
+                        break;
+                    case ConsoleKey.S:
+                        player.Move("down", grid);
+                        break;
+                    case ConsoleKey.A:
+                        player.Move("left", grid);
+                        break;
+                    case ConsoleKey.D:
+                        player.Move("right", grid);
+                        break;
+                    case ConsoleKey.I:
+                        player.OpenInventoryMenu();
+                        break;
+                }
+
+                grid.HandleTileInteraction(player);
+
+                if (grid.GetTile(player.Row, player.Col).IsGoal)
+                {
+                    grid.MoveToNextLevel(player);
+                    grid.ClearGrid();
+                    levelOne = false;
+                    levelTwo = false;
+                    levelThree = false;
+                    levelFour = false;
+                    levelFive = false;
+                    sandboxLevel = true;
+                    break;
+                }
+            }
+            
+
+            while (sandboxLevel)
+            {
+                Console.Clear();
+                Console.WriteLine("Sandbox Level:");
+                grid.DrawGrid(player);
+
+                switch (Console.ReadKey(true).Key)
+                {
+                    case ConsoleKey.W:
+                        player.Move("up", grid);
+                        break;
+                    case ConsoleKey.S:
+                        player.Move("down", grid);
+                        break;
+                    case ConsoleKey.A:
+                        player.Move("left", grid);
+                        break;
+                    case ConsoleKey.D:
+                        player.Move("right", grid);
+                        break;
+                    case ConsoleKey.I:
+                        player.OpenInventoryMenu();
+                        break;
+                }
+
+                grid.HandleTileInteraction(player);
+
+                if (grid.GetTile(player.Row, player.Col).IsGoal)
+                {
                     Console.Clear();
                     Console.WriteLine("Congratulations! You've completed the game!");
                     gameIsRunning = false;
                     break;
                 }
             }
-
-            player.UpdateName("Guardian");
         }
     }
 }

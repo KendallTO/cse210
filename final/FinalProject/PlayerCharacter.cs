@@ -143,6 +143,8 @@ public class PlayerCharacter : Character
         }
     }
 
+    // -- ITEM USAGE METHODS --
+// Add new items to use here
     public bool TryUseInventoryItem(int index)
     {
         if (index < 0 || index >= _inventory.Count)
@@ -152,6 +154,16 @@ public class PlayerCharacter : Character
         }
 
         string selectedItem = _inventory[index];
+
+        if (selectedItem.Contains("+Max Health Potion"))
+        {
+            return UseMaxHealthPotion(10);
+        }
+
+        if (selectedItem.Contains("Surgical Kit"))
+        {
+            return UseSurgicalKit();
+        }
 
         if (selectedItem.Contains("Health Potion"))
         {
@@ -209,39 +221,95 @@ public class PlayerCharacter : Character
         return false;
     }
 
+    public bool UseMaxHealthPotion(int amount = 10)
+    {
+        for (int i = 0; i < _inventory.Count; i++)
+        {
+            if (_inventory[i].Contains("+Max Health Potion"))
+            {
+                Console.WriteLine($"You used a +Max Health Potion and permanently increase your max health by {amount}!");
+                _maxHealth += amount;
+                _health = Math.Min(_health + amount, _maxHealth);
+                RemoveItemFromInventory(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool UseSurgicalKit()
+    {
+        for (int i = 0; i < _inventory.Count; i++)
+        {
+            if (_inventory[i].Contains("Surgical Kit"))
+            {
+                int restoredHealth = _maxHealth - _health;
+                _health = _maxHealth;
+                Console.WriteLine($"You use the Surgical Kit and restore {restoredHealth} HP, healing all your injuries!");
+                RemoveItemFromInventory(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void Attack(EnemyCharacter enemy, bool showMessage = true, bool playSound = true)
     {
-        int damage = _equippedWeapon?.Damage ?? 3;
+        int attacksThisTurn = _equippedWeapon?.AttackCount ?? 1;
+        int lingeringWeaponDamage = _equippedWeapon?.BonusDamage ?? 0;
 
-        if (showMessage)
+        for (int attackNumber = 0; attackNumber < attacksThisTurn && enemy.IsAlive; attackNumber++)
         {
-            if (_equippedWeapon != null)
-            {
-                _equippedWeapon.UseWeapon();
-            }
-            else
-            {
-                Console.WriteLine($"You attack {enemy.Name} with your fists for {damage} damage!");
-            }
-        }
+            int damage = _equippedWeapon?.Damage ?? 3;
 
-        if (_additionalDamage > 0)
-        {
             if (showMessage)
             {
-                Console.WriteLine($"Your attack is empowered by a Damage Potion, dealing an additional {_additionalDamage} damage! (Total damage: {damage + _additionalDamage})");
+                if (_equippedWeapon != null)
+                {
+                    if (attackNumber == 0)
+                    {
+                        _equippedWeapon.UseWeapon();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"You follow up with another hit from the {_equippedWeapon.WeaponName}!");
+                    }
+                }
+                else if (attackNumber == 0)
+                {
+                    Console.WriteLine($"You attack {enemy.Name} with your fists for {damage} damage!");
+                }
             }
 
-            damage += _additionalDamage;
-            _additionalDamage = 0;
-        }
+            if (lingeringWeaponDamage > 0)
+            {
+                damage += lingeringWeaponDamage;
+                if (showMessage)
+                {
+                    Console.WriteLine($"{_equippedWeapon.BonusEffectName} adds {lingeringWeaponDamage} extra damage! (Total damage: {damage})");
+                }
+            }
 
-        if (playSound)
-        {
-            GameSounds.PlayAttackSound();
-        }
+            if (_additionalDamage > 0)
+            {
+                if (showMessage)
+                {
+                    Console.WriteLine($"Your attack is empowered by a Damage Potion, dealing an additional {_additionalDamage} damage! (Total damage: {damage + _additionalDamage})");
+                }
 
-        enemy.TakeDamage(damage);
+                damage += _additionalDamage;
+                _additionalDamage = 0;
+            }
+
+            if (playSound)
+            {
+                GameSounds.PlayAttackSound();
+            }
+
+            enemy.TakeDamage(damage);
+        }
     }
 
     public void AddCurrencyPoints(int amount)
@@ -251,8 +319,16 @@ public class PlayerCharacter : Character
 
     public void EquipWeapon(Weapon weapon)
     {
+        if (_equippedWeapon != null)
+        {
+            Console.WriteLine($"You replace your {_equippedWeapon.WeaponName} with the {weapon.WeaponName}.");
+        }
+        else
+        {
+            Console.WriteLine($"You equipped the {weapon.WeaponName}.");
+        }
+
         _equippedWeapon = weapon;
-        Console.WriteLine($"You equipped the {weapon.WeaponName}.");
     }
 
     public bool HasKey(string keyName = "Key")

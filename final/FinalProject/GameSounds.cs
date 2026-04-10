@@ -8,6 +8,7 @@ public class GameSounds
     private const string FightMusicFileName = "FightMusic.wav";
     private static SoundPlayer _backgroundPlayer;
     private static bool _backgroundMusicEnabled;
+    private static bool AudioSupported => OperatingSystem.IsWindows();
 
     private static string GetSoundPath(string fileName)
     {
@@ -16,24 +17,31 @@ public class GameSounds
 
     public static void PlayBackgroundMusic()
     {
+        if (!AudioSupported)
+        {
+            _backgroundMusicEnabled = false;
+            return;
+        }
+
+        string soundPath = GetSoundPath(BackgroundMusicFileName);
+        if (!File.Exists(soundPath))
+        {
+            _backgroundMusicEnabled = false;
+            return;
+        }
+
         try
         {
-            string soundPath = GetSoundPath(BackgroundMusicFileName);
-            if (!File.Exists(soundPath))
-            {
-                Console.WriteLine($"Background music file not found: {soundPath}");
-                return;
-            }
-
             _backgroundMusicEnabled = true;
             _backgroundPlayer?.Stop();
             _backgroundPlayer = new SoundPlayer(soundPath);
             _backgroundPlayer.Load();
             _backgroundPlayer.PlayLooping();
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"Audio issue with background music: {ex.Message}");
+            _backgroundMusicEnabled = false;
+            _backgroundPlayer = null;
         }
     }
 
@@ -45,7 +53,7 @@ public class GameSounds
 
     private static void ResumeBackgroundMusic()
     {
-        if (_backgroundMusicEnabled && _backgroundPlayer != null)
+        if (AudioSupported && _backgroundMusicEnabled && _backgroundPlayer != null)
         {
             _backgroundPlayer.PlayLooping();
         }
@@ -53,79 +61,74 @@ public class GameSounds
 
     public static void PlayFightMusic()
     {
+        if (!AudioSupported)
+        {
+            _backgroundMusicEnabled = false;
+            return;
+        }
+
+        string soundPath = GetSoundPath(FightMusicFileName);
+        if (!File.Exists(soundPath))
+        {
+            _backgroundMusicEnabled = false;
+            return;
+        }
+
         try
         {
-            string soundPath = GetSoundPath(FightMusicFileName);
-            if (!File.Exists(soundPath))
-            {
-                Console.WriteLine($"Fight music file not found: {soundPath}");
-                return;
-            }
-
             _backgroundMusicEnabled = true;
             _backgroundPlayer?.Stop();
             _backgroundPlayer = new SoundPlayer(soundPath);
             _backgroundPlayer.Load();
             _backgroundPlayer.PlayLooping();
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"Audio issue with fight music: {ex.Message}");
+            _backgroundMusicEnabled = false;
+            _backgroundPlayer = null;
         }
     }
 
     public static void PlayAttackSound()
     {
-        if (!PlaySound("Attack.wav"))
-        {
-            Console.Beep(500, 200);
-        }
+        PlaySound("Attack.wav");
     }
 
     public static void PlayQuickBattleSound()
     {
-        if (!PlaySound("QuickBattle.wav", waitForCompletion: true))
-        {
-            Console.Beep(700, 400);
-        }
+        PlaySound("QuickBattle.wav", waitForCompletion: true);
     }
 
     public static void PlayDoorOpen()
     {
-        if (!PlaySound("DoorOpening.wav", waitForCompletion: true))
-        {
-            Console.Beep(1000, 150);
-        }
+        PlaySound("DoorOpening.wav", waitForCompletion: true);
     }
 
     public static void SaleComplete()
     {
-        if (!PlaySound("SaleComplete.wav"))
-        {
-            Console.Beep(800, 300);
-        }
+        PlaySound("SaleComplete.wav");
     }
 
     public static void PlayDoorHandleRattle()
     {
-        if (!PlaySound("DoorHandleRattle.wav"))
-        {
-            Console.Beep(600, 200);
-        }
+        PlaySound("DoorHandleRattle.wav");
     }
 
     public static bool PlaySound(string fileName, bool waitForCompletion = false)
     {
+        if (!AudioSupported)
+        {
+            return false;
+        }
+
         string soundPath = GetSoundPath(fileName);
+        if (!File.Exists(soundPath))
+        {
+            return false;
+        }
 
         try
         {
-            if (!File.Exists(soundPath))
-            {
-                Console.WriteLine($"Sound file not found: {soundPath}");
-                return false;
-            }
-
             using var sound = new SoundPlayer(soundPath);
             sound.Load();
 
@@ -147,9 +150,8 @@ public class GameSounds
 
             return true;
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine($"Audio issue with '{fileName}': {ex.Message}");
             return false;
         }
     }
