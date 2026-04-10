@@ -79,6 +79,14 @@ Some important files include:
 - `Weapon.cs`, `MeleeWeapon.cs`, `RangedWeapon.cs`, `MagicWeapon.cs` - define weapon behavior
 - `GameSounds.cs` - handles music and sound effects
 
+## External Sources
+
+- My brother, `Dallin Olson` aided me the most in making this project. A lot of credit goes to him 
+  for guiding me through a few difficult roadblocks in making this project.
+
+- `Room 212` on YouTube, has a tutorial for adding audio to C# projects. `Stack Overflow` helped me for 
+  formating .wav files. For system errors and getting the correct bash code to update my system was recieved through `Copilot AI`.
+
 ## Summary
 
 This project is a playable console RPG with object-oriented design, multiple classes, inheritance, and polymorphism. It is intended to be easy to run and understandable for anyone reviewing the code or trying the game for the first time.
