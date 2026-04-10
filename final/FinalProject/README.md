@@ -84,8 +84,11 @@ Some important files include:
 - My brother, `Dallin Olson` aided me the most in making this project. A lot of credit goes to him 
   for guiding me through a few difficult roadblocks in making this project.
 
-- `Room 212` on YouTube, has a tutorial for adding audio to C# projects. `Stack Overflow` helped me for 
-  formating .wav files. For system errors and getting the correct bash code to update my system was recieved through `Copilot AI`.
+- `Room 212` on YouTube, has a tutorial for adding audio to C# projects.
+- `Stack Overflow` helped me for formating .wav files, enumeration, as well as shortcuts for bools.
+-  For audio system errors that eventually required me ot update my system was recieved through `Copilot AI`.
+-  `Audacity` was used for sound editing as well as file type conversion.
+-  `Pixabay` was another source for royalty free sound affects / music.
 
 ## Summary
 
