@@ -243,6 +243,9 @@ class Program
                     break;
                 }
             }
+
+            LevelCreation.BuildSandboxLevel(grid);
+            player.SetPosition(SandBoxStartRow, SandBoxStartCol);
             
 
             while (sandboxLevel)
