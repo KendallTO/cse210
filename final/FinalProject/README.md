@@ -86,7 +86,7 @@ Some important files include:
 
 - `Room 212` on YouTube, has a tutorial for adding audio to C# projects.
 - `Stack Overflow` helped me for formating .wav files, enumeration, as well as shortcuts for bools.
--  For audio system errors that eventually required me ot update my system was recieved through `Copilot AI`.
+-  For audio system errors that eventually required me to update my system was recieved through `Copilot AI`.
 -  `Audacity` was used for sound editing as well as file type conversion.
 -  `Pixabay` was another source for royalty free sound affects / music.
 
