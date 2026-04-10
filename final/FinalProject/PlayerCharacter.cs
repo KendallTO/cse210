@@ -1,12 +1,8 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 public class PlayerCharacter : Character
 {
-    public string Name => _name;
-    public int CurrencyPoints => _currencyPoints;
-
     private int _currencyPoints;
     private int _additionalDamage;
     private Weapon _equippedWeapon;
@@ -20,7 +16,7 @@ public class PlayerCharacter : Character
         _inventory = new List<string>();
     }
 
-    public PlayerCharacter(int row, int col) : base("Guardian", 100, row, col)
+    public PlayerCharacter(int row, int col) : base("Recruit", 100, row, col)
     {
         _currencyPoints = 0;
         _additionalDamage = 0;
@@ -56,10 +52,17 @@ public class PlayerCharacter : Character
             _row = newRow;
             _col = newCol;
         }
-        else
-        {
-            
-        }
+    }
+
+    public void UpdateName(string newName)
+    {
+        _name = newName;
+    }
+
+    public void SetPosition(int row, int col)
+    {
+        _row = row;
+        _col = col;
     }
 
     public void AddItemToInventory(string item)
@@ -67,11 +70,12 @@ public class PlayerCharacter : Character
         _inventory.Add(item);
     }
 
-    public IReadOnlyList<string> Inventory => _inventory.AsReadOnly();
-
     public void DisplayInventory(bool showItemNumbers = false)
     {
+        Console.WriteLine($"Player: {Name}");
+        Console.WriteLine($"HP: {Health}/{MaxHealth} {Battle.BuildHealthBar(Health, MaxHealth)}");
         DisplayCurrencyPoints();
+
         if (_equippedWeapon != null)
         {
             Console.WriteLine($"Equipped Weapon: {_equippedWeapon.WeaponName} ({_equippedWeapon.Damage} dmg)");
@@ -185,6 +189,7 @@ public class PlayerCharacter : Character
                 return true;
             }
         }
+
         return false;
     }
 
@@ -200,6 +205,7 @@ public class PlayerCharacter : Character
                 return true;
             }
         }
+
         return false;
     }
 
@@ -225,6 +231,7 @@ public class PlayerCharacter : Character
             {
                 Console.WriteLine($"Your attack is empowered by a Damage Potion, dealing an additional {_additionalDamage} damage! (Total damage: {damage + _additionalDamage})");
             }
+
             damage += _additionalDamage;
             _additionalDamage = 0;
         }
@@ -237,7 +244,6 @@ public class PlayerCharacter : Character
         enemy.TakeDamage(damage);
     }
 
-    
     public void AddCurrencyPoints(int amount)
     {
         _currencyPoints += amount;
@@ -248,8 +254,6 @@ public class PlayerCharacter : Character
         _equippedWeapon = weapon;
         Console.WriteLine($"You equipped the {weapon.WeaponName}.");
     }
-
-    public Weapon EquippedWeapon => _equippedWeapon;
 
     public bool HasKey(string keyName = "Key")
     {
@@ -270,4 +274,9 @@ public class PlayerCharacter : Character
     {
         Console.WriteLine($"Currency Points: ¢{CurrencyPoints}");
     }
+
+    public string Name => _name;
+    public int CurrencyPoints => _currencyPoints;
+    public IReadOnlyList<string> Inventory => _inventory.AsReadOnly();
+    public Weapon EquippedWeapon => _equippedWeapon;
 }

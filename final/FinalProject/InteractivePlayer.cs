@@ -34,9 +34,20 @@ public class InteractivePlayer : PlayerCharacter
         _nPCInventory.Add(item);
     }
 
-    public string Role => _role;
+    private void TypeDialogue(string text, int delayMilliseconds = 25)
+    {
+        foreach (char character in text)
+        {
+            Console.Write(character);
 
-    public new IReadOnlyList<InventoryItem> Inventory => _nPCInventory.AsReadOnly();
+            if (character != '\n' && character != '\r')
+            {
+                Thread.Sleep(delayMilliseconds);
+            }
+        }
+
+        Console.WriteLine();
+    }
 
     public void Interact(PlayerCharacter player)
     {
@@ -46,20 +57,17 @@ public class InteractivePlayer : PlayerCharacter
 
         for (int i = 0; i < _dialogue.Count; i++)
         {
-            Console.WriteLine(_dialogue[i].Text);
+            TypeDialogue(_dialogue[i].Text);
             Console.WriteLine();
 
-            // Check if this dialogue line has an item to give
             if (_dialogue[i].ItemToGive != null)
             {
                 Console.WriteLine($"You receive: {_dialogue[i].ItemToGive.Name}");
                 player.AddItemToInventory(_dialogue[i].ItemToGive.GetName());
-                // Remove the item from NPC inventory if it was meant to be given
                 _nPCInventory.Remove(_dialogue[i].ItemToGive);
                 Console.WriteLine();
             }
 
-            // Check if this dialogue line gives a weapon to equip
             if (_dialogue[i].WeaponToGive != null)
             {
                 player.EquipWeapon(_dialogue[i].WeaponToGive);
@@ -76,9 +84,6 @@ public class InteractivePlayer : PlayerCharacter
                 Console.WriteLine();
             }
         }
-
-        // Remove the automatic giving of all items at the end
-        // This is now handled during specific dialogue lines
     }
 
     public void Trade(PlayerCharacter player)
@@ -87,11 +92,13 @@ public class InteractivePlayer : PlayerCharacter
         Console.Write("Your ");
         player.DisplayCurrencyPoints();
         Console.WriteLine("\nItems for sale:");
+
         int index = 1;
         foreach (var item in _nPCInventory)
-        {   
+        {
             Console.WriteLine($"{index++}. - {item.Name} ¢{item.Price} currency points");
         }
+
         Console.WriteLine("\nEnter the number of the item you want to buy, or press Enter to exit.");
         string input = Console.ReadLine();
 
@@ -118,4 +125,7 @@ public class InteractivePlayer : PlayerCharacter
             Console.WriteLine("Exiting trade.");
         }
     }
+
+    public string Role => _role;
+    public new IReadOnlyList<InventoryItem> Inventory => _nPCInventory.AsReadOnly();
 }

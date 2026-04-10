@@ -4,14 +4,7 @@ public class InventoryItem
 {
     private string _name;
     private string _description;
-
     private int _price;
-
-    public string Name => _name;
-
-    public string Description => _description;
-
-    public int Price => _price;
 
     public InventoryItem(string name, string description)
     {
@@ -30,4 +23,8 @@ public class InventoryItem
     {
         return $"{_name}: {_description}";
     }
+
+    public string Name => _name;
+    public string Description => _description;
+    public int Price => _price;
 }

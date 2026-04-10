@@ -5,9 +5,6 @@ public class Weapon
     private int _damage;
     private string _weaponName;
 
-    public string WeaponName => _weaponName;
-    public int Damage => _damage;
-
     public Weapon(string weaponName, int damage)
     {
         _weaponName = weaponName;
@@ -18,4 +15,7 @@ public class Weapon
     {
         Console.WriteLine($"You use the {_weaponName} and deal {_damage} damage!");
     }
+
+    public string WeaponName => _weaponName;
+    public int Damage => _damage;
 }

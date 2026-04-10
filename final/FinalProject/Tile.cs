@@ -15,13 +15,6 @@ public enum TileType
 
 public class Tile
 {
-    public int Row { get; set; }
-    public int Col { get; set; }
-    public TileType Type { get; set; }
-    public virtual EnemyCharacter Enemy { get; set; }
-    public InteractivePlayer Npc { get; set; }
-    public string CustomTileSymbol { get; set; } = "?";
-
     public Tile(int row, int col, TileType type = TileType.Floor, EnemyCharacter enemy = null, InteractivePlayer npc = null, string customSymbol = "?")
     {
         Row = row;
@@ -31,12 +24,6 @@ public class Tile
         Npc = npc;
         CustomTileSymbol = customSymbol;
     }
-
-    public bool IsWalkable => Type != TileType.Wall && Type != TileType.Door;
-    public bool IsGoal => Type == TileType.Goal;
-    public bool IsDoor => Type == TileType.Door || Type == TileType.UnlockedDoor;
-    public bool IsEnemy => (Type == TileType.Enemy || Type == TileType.CustomEnemy) && Enemy != null;
-    public bool IsNPC => (Type == TileType.NPC || Type == TileType.CustomNPC) && Npc != null;
 
     public virtual void Display()
     {
@@ -61,8 +48,6 @@ public class Tile
                 Console.Write("[_]");
                 break;
             case TileType.CustomNPC:
-                Console.Write($"[{CustomTileSymbol}]");
-                break;
             case TileType.CustomEnemy:
                 Console.Write($"[{CustomTileSymbol}]");
                 break;
@@ -102,4 +87,16 @@ public class Tile
     public static Tile CustomNPC(int row, int col, InteractivePlayer npc, string symbol) => new Tile(row, col, TileType.CustomNPC, null, npc, symbol);
     public static Tile EnemyTile(int row, int col, EnemyCharacter enemy) => new Tile(row, col, TileType.Enemy, enemy, null);
     public static Tile CustomEnemyTile(int row, int col, EnemyCharacter enemy, string symbol) => new Tile(row, col, TileType.CustomEnemy, enemy, null, symbol);
+
+    public int Row { get; set; }
+    public int Col { get; set; }
+    public TileType Type { get; set; }
+    public virtual EnemyCharacter Enemy { get; set; }
+    public InteractivePlayer Npc { get; set; }
+    public string CustomTileSymbol { get; set; } = "?";
+    public bool IsWalkable => Type != TileType.Wall && Type != TileType.Door;
+    public bool IsGoal => Type == TileType.Goal;
+    public bool IsDoor => Type == TileType.Door || Type == TileType.UnlockedDoor;
+    public bool IsEnemy => (Type == TileType.Enemy || Type == TileType.CustomEnemy) && Enemy != null;
+    public bool IsNPC => (Type == TileType.NPC || Type == TileType.CustomNPC) && Npc != null;
 }
